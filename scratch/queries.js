@@ -53,7 +53,7 @@ notes.create({'title': '5 life lessons learned from dogs',
   }
 });
 
-notes.delete(1006, (err, item) => {
+notes.delete(1005, (err, item) => {
   if (err) {
     console.error(err);
   }

@@ -6,6 +6,8 @@ console.log('Hello Noteful!');
 
 const express = require('express');
 const data = require('./db/notes');
+const simDB = require('./db/simDB');  // <<== add this
+const notes = simDB.initialize(data); // <<== and this
 const {PORT} = require('./config');
 const {logger} = require('./middleware/logger');
 
@@ -14,26 +16,24 @@ const app = express();
 app.use(express.static('public'));
 app.use(logger);
 
-app.get('/api/notes', (req, res) => {
-  const searchTerm = req.query.searchTerm;
-  if (searchTerm) {
-    let listFiltered = data.filter(function (item) {
-      return item.title.includes(searchTerm);
-    });
-    res.json(listFiltered);
-  }else {
-    res.json(data);
-  }
+app.get('/api/notes', (req, res, next) => {
+  const { searchTerm } = req.query;
+  notes.filter(searchTerm, (err, list) => {
+    if (err) {
+      return next(err); // goes to error handler
+    }
+    res.json(list); // responds with filtered array
+  });
 });
-//to check runtime errors
-// app.get('/boom', (req, res, next) => {
-//   throw new Error('Boom!!');
-// });
 
-app.get('/api/notes/:id', (req, res) => {
-  const id = req.params.id; 
-
-  res.json(data.find(item => item.id === Number(id)));
+app.get('/api/notes/:id', (req, res, next) => {
+  const {id} = req.params; 
+  notes.find(id, (err, list) => {
+    if (err) {
+      return next(err); // goes to error handler
+    }
+    res.json(list); // responds with filtered array
+  });
 });
 
 app.use(function (req, res, next) {
