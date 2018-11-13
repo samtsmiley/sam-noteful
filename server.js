@@ -25,9 +25,10 @@ app.get('/api/notes', (req, res) => {
     res.json(data);
   }
 });
-app.get('/boom', (req, res, next) => {
-  throw new Error('Boom!!');
-});
+//to check runtime errors
+// app.get('/boom', (req, res, next) => {
+//   throw new Error('Boom!!');
+// });
 
 app.get('/api/notes/:id', (req, res) => {
   const id = req.params.id; 
