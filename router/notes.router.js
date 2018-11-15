@@ -13,8 +13,11 @@ router.get('/', (req, res, next) => {
   const { searchTerm } = req.query;
   notes.filter(searchTerm) 
     .then(item => {
-      res.json(item);
-      next();
+      if (item) {
+        res.json(item);
+      } else {
+        next();
+      }
     })
     .catch(err => {
       next(err);
