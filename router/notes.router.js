@@ -13,9 +13,9 @@ router.get('/', (req, res, next) => {
   const { searchTerm } = req.query;
   notes.filter(searchTerm) 
     .then(item => {
-      if (item) {
+      if(item){
         res.json(item);
-      } else {
+      }else{
         next();
       }
     })
@@ -53,8 +53,11 @@ router.post('/', (req, res, next) => {
   }
   notes.create(newItem)  
     .then(item => {
-      res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
-      next();
+      if (item){
+        res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
+      }else{
+        next();
+      }    
     })
     .catch(err => {
       next(err);

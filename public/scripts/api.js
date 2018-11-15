@@ -3,12 +3,13 @@
 
 const api = {
 
-  search: function (query) {
-    return $.ajax({
+  search: function (query, callback) {
+    $.ajax({
       type: 'GET',
       url: '/api/notes/',
       dataType: 'json',
-      data: query
+      data: query,
+      success: callback
     });
   },
 
