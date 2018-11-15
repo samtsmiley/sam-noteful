@@ -62,7 +62,7 @@ router.delete('/:id', (req, res, next) => {
       console.error(err);
     }
     if (item) {
-      console.log(`Deleted note \`${req.params.ID}\``);
+      console.log(`Deleted note ${id}`);
       res.status(204).end();
     }
   });
