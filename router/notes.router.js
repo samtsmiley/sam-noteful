@@ -11,29 +11,39 @@ const notes = simDB.initialize(data); // <<== and this
 
 router.get('/', (req, res, next) => {
   const { searchTerm } = req.query;
-  notes.filter(searchTerm, (err, list) => {
-    if (err) {
-      return next(err); // goes to error handler
-    }
-    res.json(list); // responds with filtered array
-  });
+  notes.filter(searchTerm) 
+    .then(item => {
+      if(item){
+        res.json(item);
+      }else{
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
 });
+
   
 router.get('/:id', (req, res, next) => {
   const {id} = req.params; 
-  notes.find(id, (err, list) => {
-    if (err) {
-      return next(err); // goes to error handler
-    }
-    res.json(list); // responds with filtered array
-  });
+  notes.find(id)
+    .then (item => {
+      if (item) {
+        res.json(item);
+      } else {
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
 });
 
 
-router.post('/', (req, res, next) => {
 
+router.post('/', (req, res, next) => {
   const { title, content } = req.body;
-  
   const newItem = { title, content };
   /***** Never trust users - validate input *****/
   if (!newItem.title) {
@@ -41,85 +51,62 @@ router.post('/', (req, res, next) => {
     err.status = 400;
     return next(err);
   }
-  
-  notes.create(newItem, (err, item) => {
-    if (err) {
-      return next(err);
-    }
-    if (item) {
-      res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
-    } else {
-      next();
-    }
-  });
+  notes.create(newItem)  
+    .then(item => {
+      if (item){
+        res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
+      }else{
+        next();
+      }    
+    })
+    .catch(err => {
+      next(err);
+    });
 });
+    
+    
+    
 
 
 router.delete('/:id', (req, res, next) => {
   const {id} = req.params;
-  notes.delete(id, (err, item) => {
-    if (err) {
-      console.error(err);
-    }
-    if (item) {
-      console.log(`Deleted note ${id}`);
-      res.status(204).end();
-    }
-  });
+  notes.delete(id) 
+  
+    .then(item => {
+      if (item) {
+        console.log(`Deleted note ${id}`);
+        res.status(204).end();
+      }else{
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
 });
   
-  
-  
-//     const {id} = req.params;
-    
-//   notes.delete(id, (err, item) => {
-//     if (err) {
-//       console.error(err);
-//     }
-//     if (item) {
-//       console.log(item);
-//     } else {
-//       console.log('not found');
-//     }
-// //     next();
-//   });
-// });
-
-
-// router.delete('/:id', (req, res) => {
-//     Recipes.delete(req.params.id);
-//     console.log(`Deleted shopping list item \`${req.params.ID}\``);
-//     res.status(204).end();
-//   });
 
 
 router.put('/:id', (req, res, next) => {
   const id = req.params.id;
-  
-  /***** Never trust users - validate input *****/
   const updateObj = {};
   const updateFields = ['title', 'content'];
-  
   updateFields.forEach(field => {
     if (field in req.body) {
       updateObj[field] = req.body[field];
     }
   });
-
- 
-  
-  notes.update(id, updateObj, (err, item) => {
-    if (err) {
-      return next(err);
-    }
-    if (item) {
+  notes.update(id, updateObj)
+    .then(item => {
       console.log(req.body);
       console.log(updateObj);
       res.json(item);
-    } else {
       next();
-    }
-  });
+    })
+    .catch(err => {
+      next(err);
+    });
+
 });
   
 
