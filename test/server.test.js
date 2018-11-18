@@ -62,7 +62,7 @@ describe('GET /api/notes', function () {
       .then(res => {
         for ( let i=0; i<res.body.length; i++)
           expect(res.body[i]).to.include.keys('id', 'title', 'content' );
-        // expect(res.body[1]).to.include.keys('title');
+        // expect(res.body[1]).to.include.keys('title ');
         // expect(res.body[2]).to.include.keys('content');
       });
   });
