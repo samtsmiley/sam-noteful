@@ -23,21 +23,21 @@ app.use(express.json());
 
 app.use('/api/notes', notesRouter);
 
-if (require.main === module) {
-  app.startServer(PORT).catch(err => {
-    if (err.code === 'EADDRINUSE') {
-      const stars = '*'.repeat(80);
-      console.error(`${stars}\nEADDRINUSE (Error Address In Use). Please stop other web servers using port ${PORT}\n${stars}`);
-    }
-    console.error(err);
-  });
-}
-
 // if (require.main === module) {
-//   app.listen(PORT, function () {
-//     console.info(`Server listening on ${this.address().port}`);
-//   }).on('error', err => {
+//   app.startServer(PORT).catch(err => {
+//     if (err.code === 'EADDRINUSE') {
+//       const stars = '*'.repeat(80);
+//       console.error(`${stars}\nEADDRINUSE (Error Address In Use). Please stop other web servers using port ${PORT}\n${stars}`);
+//     }
 //     console.error(err);
 //   });
 // }
+
+if (require.main === module) {
+  app.listen(process.env.PORT || PORT, function () {
+    console.info(`Server listening on ${this.address().port}`);
+  }).on('error', err => {
+    console.error(err);
+  });
+}
 module.exports = app; // Export for testing
